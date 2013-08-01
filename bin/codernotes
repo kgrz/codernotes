@@ -1,0 +1,14 @@
+#! /usr/bin/env ruby
+
+require "codernotes"
+
+exit(0) unless Dir.exists?("#{Dir.pwd}/.git")
+
+Codernotes::Config.new.init
+
+project_name = Dir.pwd.split("/").last
+project_dir = "#{Codernotes::Config::DEFAULT_FOLDER}/#{project_name}"
+
+Dir.mkdir(project_dir) unless Dir.exists?(project_dir)
+FileUtils.touch("#{project_dir}/notes.txt") unless File.exists?("#{project_dir}/notes.txt")
+
