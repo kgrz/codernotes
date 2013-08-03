@@ -1,6 +1,8 @@
 #! /usr/bin/env ruby
 
 require "codernotes"
+require "rugged"
+
 
 exit(0) unless Dir.exists?("#{Dir.pwd}/.git")
 
@@ -9,6 +11,25 @@ Codernotes::Config.new.init
 project_name = Dir.pwd.split("/").last
 project_dir = "#{Codernotes::Config::DEFAULT_FOLDER}/#{project_name}"
 
-Dir.mkdir(project_dir) unless Dir.exists?(project_dir)
-FileUtils.touch("#{project_dir}/notes.txt") unless File.exists?("#{project_dir}/notes.txt")
+
+# If the config file is present, read that and load the remote specific values
+
+
+
+repo = Rugged::Repository.new(Dir.pwd)
+remotes = Rugged::Remote.each(repo).to_a
+
+
+# Contributors usually have more than 1 remote set up. But relying on this is 
+# plain dumb
+
+def contributor?
+  remotes.count > 1
+end
+
+if contributor?
+  Dir.mkdir(project_dir) unless Dir.exists?(project_dir)
+  FileUtils.touch("#{project_dir}/notes.txt") unless File.exists?("#{project_dir}/notes.txt")
+end
+
 
